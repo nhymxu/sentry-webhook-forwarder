@@ -1,6 +1,8 @@
 import json
 import logging
 import os
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
@@ -46,6 +48,13 @@ async def build_slack_message_block(msg):
 
     tags = await parse_event_tags(msg.get('event', {}).get('tags', {}))
 
+    dt = datetime.fromtimestamp(
+        msg['event']['timestamp'],
+        tz=ZoneInfo('UTC')
+    )
+    local_dt = dt.astimezone(tz=ZoneInfo('Asia/Ho_Chi_Minh'))
+    date_str = local_dt.isoformat()
+
     return [
         {
             "type": "header",
@@ -63,7 +72,7 @@ async def build_slack_message_block(msg):
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*timestamp:*\n{msg['event']['timestamp']}"
+                    "text": f"*timestamp:*\n{date_str}"
                 }
             ]
         },
