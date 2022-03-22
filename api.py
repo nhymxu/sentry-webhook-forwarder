@@ -53,7 +53,6 @@ async def build_slack_message_block(msg):
         tz=ZoneInfo('UTC')
     )
     local_dt = dt.astimezone(tz=ZoneInfo('Asia/Ho_Chi_Minh'))
-    date_str = local_dt.isoformat()
 
     return [
         {
@@ -72,7 +71,7 @@ async def build_slack_message_block(msg):
                 },
                 {
                     "type": "mrkdwn",
-                    "text": f"*timestamp:*\n{date_str}"
+                    "text": f"*timestamp:*\n{local_dt}"
                 }
             ]
         },
