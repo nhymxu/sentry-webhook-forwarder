@@ -1,0 +1,8 @@
+excluded/
+.venv/
+.idea/
+
+README.md
+local_dev.py
+requirements-dev.txt
+vercel.json
