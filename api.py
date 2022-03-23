@@ -144,4 +144,5 @@ async def webhook_sentry(api_key: str, request: Request):
         raise e
     # End slack
 
+    return slack_msg
     return {'msg': 'ok'}
