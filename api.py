@@ -59,7 +59,7 @@ async def build_slack_message_block(msg):
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": f'obm/{project_slug}'
+                "text": project_slug
             }
         },
         {
