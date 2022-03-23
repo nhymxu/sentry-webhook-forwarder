@@ -41,7 +41,7 @@ async def build_slack_message_block(msg):
     :param msg:
     :return:
     """
-    project_slug = msg['project_slug']
+    project_slug = msg.get('project_slug')
 
     # project slug format: dev-project-name, stg-project-name, prod-project-name
     run_env = project_slug.split('-')[0]
@@ -49,7 +49,7 @@ async def build_slack_message_block(msg):
     tags = await parse_event_tags(msg.get('event', {}).get('tags', {}))
 
     dt = datetime.fromtimestamp(
-        msg['event']['timestamp'],
+        msg.get('event', {}).get('timestamp', datetime.now().timestamp()),
         tz=ZoneInfo('UTC')
     )
     local_dt = dt.astimezone(tz=ZoneInfo('Asia/Ho_Chi_Minh'))
@@ -67,7 +67,7 @@ async def build_slack_message_block(msg):
             "fields": [
                 {
                     "type": "mrkdwn",
-                    "text": f"*severity:*\n{msg['level'].upper()}"
+                    "text": f"*severity:*\n{msg.get('level', '').upper()}"
                 },
                 {
                     "type": "mrkdwn",
@@ -92,7 +92,7 @@ async def build_slack_message_block(msg):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*message*:\n{msg['message']}"
+                "text": f"*message*:\n{msg.get('message')}"
             },
             "accessory": {
                 "type": "button",
