@@ -92,14 +92,18 @@ async def build_slack_message_block(msg):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*event id:* <{msg['url']}|{msg['event']['event_id']}>"
-            }
-        },
-        {
-            "type": "section",
-            "text": {
-                "type": "mrkdwn",
                 "text": f"*message*:\n{msg['message']}"
+            },
+            "accessory": {
+                "type": "button",
+                "text": {
+                    "type": "plain_text",
+                    "text": "See more",
+                    "emoji": True
+                },
+                "value": "show_more_information",
+                "url": msg['url'],
+                "action_id": "button-action"
             }
         }
     ]
