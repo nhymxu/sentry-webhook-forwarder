@@ -92,7 +92,11 @@ async def build_slack_message_block(msg):
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"*message*:\n{msg['message']}"
+                "text": '*message*:\n{}\n{}\n{}'.format(
+                    msg.get('event', {}).get('title', ''),
+                    msg.get('message', ''),
+                    msg.get('culprit', '')
+                )
             },
             "accessory": {
                 "type": "button",
