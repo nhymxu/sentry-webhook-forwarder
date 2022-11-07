@@ -128,11 +128,13 @@ async def _build_telegram_message_block(msg: dict) -> str:
     )
     local_dt = dt.astimezone(tz=ZoneInfo('Asia/Ho_Chi_Minh'))
 
-    output_message = f"Sentry / {project_slug} - {local_dt}\n"
-
-    output_message += f"*message*:\n{msg.get('message')}"
-
-    output_message += "\n\n#notification"
+    output_message = (
+        f"Sentry / {project_slug}\n"
+        f"-----"
+        f"<b>Time</b>: {local_dt}\n"
+        f"<b>message</b>:\n{msg.get('message')}\n"
+        f"\n\n #notification"
+    )
 
     return output_message
 
