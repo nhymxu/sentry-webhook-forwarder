@@ -209,7 +209,7 @@ async def webhook_telegram(api_key: str, request: Request):
     msg = await request.body()
     issue = json.loads(msg)
 
-    message_builder = _build_telegram_message_block(issue)
+    message_builder = await _build_telegram_message_block(issue)
 
     try:
         url = f'{TELEGRAM_WEBHOOK}&text={message_builder}'
