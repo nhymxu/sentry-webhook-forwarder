@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from datetime import datetime
+from urllib.parse import quote as url_quote
 from zoneinfo import ZoneInfo
 
 import requests
@@ -38,7 +39,7 @@ async def _build_slack_message_block(msg):
     """
     project_slug = msg.get('project_slug')
 
-    # project slug format: dev-project-name, stg-project-name, prod-project-name
+    # project slug format: dev-project-name, stg-project-name
     run_env = project_slug.split('-')[0]
 
     tags = await parse_event_tags(msg.get('event', {}).get('tags', {}))
@@ -117,7 +118,7 @@ async def _build_telegram_message_block(msg: dict) -> str:
     """
     project_slug = msg.get('project_slug')
 
-    # project slug format: dev-project-name, stg-project-name, prod-project-name
+    # project slug format: dev-project-name, stg-project-name
     run_env = project_slug.split('-')[0]
 
     tags = await parse_event_tags(msg.get('event', {}).get('tags', {}))
@@ -130,7 +131,7 @@ async def _build_telegram_message_block(msg: dict) -> str:
 
     output_message = (
         f"Sentry / {project_slug}\n"
-        f"-----"
+        f"-----\n"
         f"<b>Time</b>: {local_dt}\n"
         f"<b>message</b>:\n{msg.get('message')}\n"
         f"\n\n #notification"
@@ -171,7 +172,10 @@ async def webhook_slack(api_key: str, request: Request):
     issue = json.loads(msg)
 
     # Begin slack
-    color = SLACK_MSG_COLORS.get(issue['level'].lower(), SLACK_MSG_COLORS['info'])
+    color = SLACK_MSG_COLORS.get(
+        issue['level'].lower(),
+        SLACK_MSG_COLORS['info']
+    )
 
     slack_msg = {
         'attachments': [
@@ -185,7 +189,7 @@ async def webhook_slack(api_key: str, request: Request):
     try:
         r = requests.post(SLACK_WEBHOOK, json=slack_msg)
 
-        # Handling error: https://api.slack.com/messaging/webhooks#handling_errors
+        # https://api.slack.com/messaging/webhooks#handling_errors
         r.raise_for_status()
     except Exception as e:
         logger.error(e)
@@ -214,7 +218,8 @@ async def webhook_telegram(api_key: str, request: Request):
     message_builder = await _build_telegram_message_block(issue)
 
     try:
-        url = f'{TELEGRAM_WEBHOOK}&text={message_builder}'
+        text_msg = url_quote(message_builder)
+        url = f'{TELEGRAM_WEBHOOK}&text={text_msg}'
         r = requests.get(url)
         r.raise_for_status()
 
